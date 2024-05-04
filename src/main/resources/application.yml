@@ -1,0 +1,17 @@
+spring.autoconfigure.exclude:
+- org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
+- org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration
+
+
+
+User:
+  username: "JavaBackEnd"
+  password: "PA5sAtWULTuGlbLm"
+  database: "CareerDay"
+
+Encryption:
+  PasswordStrength: "10"
+
+Application:
+  AppName: "School Project"
+  DatabaseName: "CareerDay"
