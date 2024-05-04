@@ -5,9 +5,9 @@ spring.autoconfigure.exclude:
 
 
 User:
-  username: "JavaBackEnd"
-  password: "PA5sAtWULTuGlbLm"
-  database: "CareerDay"
+  username: ""
+  password: ""
+  database: ""
 
 Encryption:
   PasswordStrength: "10"
