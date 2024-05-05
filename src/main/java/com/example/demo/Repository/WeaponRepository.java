@@ -8,5 +8,6 @@ public interface WeaponRepository extends MongoRepository<WeaponsDocumentModel, 
 
     WeaponsDocumentModel save(WeaponsDocumentModel weapon);
 
+    WeaponsDocumentModel findOneByWeaponName(String weaponName);
 
 }

@@ -22,7 +22,7 @@ public class WarhammerController {
 
     @PostMapping("/PostWeapons")
     public HttpResponseModel UploadWeapons(@RequestBody WeaponsRequestModel weapon){
-        return null;
+        return warhammerService.UploadWeapon(weapon);
     }
 
     @PostMapping("/WeaponType")
