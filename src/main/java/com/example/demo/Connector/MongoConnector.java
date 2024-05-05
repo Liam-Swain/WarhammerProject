@@ -37,7 +37,7 @@ public class MongoConnector {
 
         MongoClientSettings clientSettings = MongoClientSettings.builder()
                 .retryWrites(true)
-                .applyConnectionString(new ConnectionString("mongodb+srv://" + username + ":" + password + "@" + databaseName + ".eph02uc.mongodb.net/"))
+                .applyConnectionString(new ConnectionString("mongodb+srv://" + username+ ":" + password + "@" + database + ".msfgcme.mongodb.net/"))
                 .applyToConnectionPoolSettings((ConnectionPoolSettings.Builder builder) -> {
                     builder.maxSize(100) //connections count
                             .minSize(5)
@@ -55,7 +55,7 @@ public class MongoConnector {
 
     @Bean
     public MongoTemplate mongoTemplate() throws Exception {
-        return new MongoTemplate(mongoClient(), "CareerDay");
+        return new MongoTemplate(mongoClient(), "Warhammer40k");
     }
 
 

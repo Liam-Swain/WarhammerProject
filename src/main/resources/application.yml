@@ -5,13 +5,13 @@ spring.autoconfigure.exclude:
 
 
 User:
-  username: ""
-  password: ""
-  database: ""
+  username: "BackEnd"
+  password: "zde53Y9ERTpmBRYR"
+  database: "warhammerproject"
 
 Encryption:
   PasswordStrength: "10"
 
 Application:
-  AppName: "School Project"
-  DatabaseName: "CareerDay"
+  AppName: "Warhammer40k"
+  DatabaseName: "warhammerproject"
