@@ -1,4 +1,4 @@
-package Documents;
+package com.example.demo.Documents;
 
 
 import lombok.AllArgsConstructor;

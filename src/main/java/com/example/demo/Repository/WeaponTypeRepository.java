@@ -1,8 +1,6 @@
 package com.example.demo.Repository;
 
-import com.example.demo.Models.WeaponRequestTypes;
-import com.example.demo.Models.WeaponsDocumentModel;
-import com.example.demo.Models.WeaponsDocumentTypes;
+import com.example.demo.Documents.WeaponsDocumentTypes;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface WeaponTypeRepository extends MongoRepository<WeaponsDocumentTypes, String> {

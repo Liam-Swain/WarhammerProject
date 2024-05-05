@@ -1,5 +1,7 @@
 package com.example.demo.ServiceImpl;
 
+import com.example.demo.Documents.WeaponsDocumentModel;
+import com.example.demo.Documents.WeaponsDocumentTypes;
 import com.example.demo.Models.*;
 import com.example.demo.Repository.WeaponRepository;
 import com.example.demo.Repository.WeaponTypeRepository;
@@ -105,9 +107,18 @@ public class WarhammerServiceImpl implements WarhammerService {
         if(weaponsRequestModel.getDamage().isEmpty()){
             responseMessage += "Weapon Damage is Empty; ";
         }
-        /*
-        Need to do rest of cases
-         */
+        if(weaponsRequestModel.getBallisticSkill().isEmpty()){
+            responseMessage += "Weapon Ballistic Skill is Empty; ";
+        }
+        if(weaponsRequestModel.getNumberOfShots().isEmpty()){
+            responseMessage += "Weapon Number of Shots is Empty; ";
+        }
+        if(weaponsRequestModel.getPoints().isEmpty()){
+            responseMessage += "Weapon Points is Empty; ";
+        }
+        if(weaponsRequestModel.getWeaponTypeNames().isEmpty()){
+            responseMessage += "Weapon Type Names is Empty; ";
+        }
 
         if(responseMessage.isEmpty()){
             WeaponsDocumentModel weaponsDocumentModel = weaponRepository.findOneByWeaponName(weaponsRequestModel.getWeaponName());
