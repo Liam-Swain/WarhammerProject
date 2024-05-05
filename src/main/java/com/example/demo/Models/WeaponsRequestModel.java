@@ -12,9 +12,7 @@ import java.util.List;
 @Data
 public class WeaponsRequestModel {
 
-    @Id
-    private String id;
-    private String name;
+    private String weaponName;
     private String numberOfShots;
     private String armourPenetration;
     private List<String> weaponTypeNames;
@@ -22,5 +20,5 @@ public class WeaponsRequestModel {
     private String ballisticSkill;
     private String strength;
     private String damage;
-
+    private String points;
 }

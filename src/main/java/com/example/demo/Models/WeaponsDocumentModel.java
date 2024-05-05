@@ -17,12 +17,13 @@ public class WeaponsDocumentModel {
 
     @Id
     private String id;
-    private String name;
+    private String weaponName;
     private String numberOfShots;
     private String armourPenetration;
-    private List<WeaponRequestTypes> weaponRequestTypes;
+    private List<WeaponsDocumentTypes> weaponRequestTypes;
     private String range;
     private String ballisticSkill;
     private String strength;
     private String damage;
+    private String points;
 }
