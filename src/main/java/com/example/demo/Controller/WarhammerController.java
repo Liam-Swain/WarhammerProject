@@ -1,6 +1,7 @@
 package com.example.demo.Controller;
 
 
+import com.example.demo.Models.CoreAbilityRequestModel;
 import com.example.demo.Models.HttpResponseModel;
 import com.example.demo.Models.WeaponRequestTypes;
 import com.example.demo.Models.WeaponsRequestModel;
@@ -33,5 +34,12 @@ public class WarhammerController {
         return response;
     }
 
+    @PostMapping("/CoreAbilities")
+    public HttpResponseModel UploadCoreAbility(@RequestBody CoreAbilityRequestModel coreAbilityRequestModel){
+        log.info("Entering Core Ability Upload");
+        HttpResponseModel response = warhammerService.UploadCoreAbility((coreAbilityRequestModel));
+        log.info("Exiting Core Ability Upload");
+        return response;
+    }
 
 }

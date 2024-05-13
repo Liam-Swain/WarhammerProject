@@ -1,8 +1,10 @@
 package com.example.demo.ServiceImpl;
 
+import com.example.demo.Documents.CoreAbilityDocumentModel;
 import com.example.demo.Documents.WeaponsDocumentModel;
 import com.example.demo.Documents.WeaponsDocumentTypes;
 import com.example.demo.Models.*;
+import com.example.demo.Repository.CoreAbilityRepository;
 import com.example.demo.Repository.WeaponRepository;
 import com.example.demo.Repository.WeaponTypeRepository;
 import com.example.demo.Service.WarhammerService;
@@ -27,6 +29,8 @@ public class WarhammerServiceImpl implements WarhammerService {
     @Autowired
     WeaponRepository weaponRepository;
 
+    @Autowired
+    CoreAbilityRepository coreAbilityRepository;
     /*
 
     *** We Should Build an Adapter Class to convert our request to documents ***
@@ -153,6 +157,51 @@ public class WarhammerServiceImpl implements WarhammerService {
         }
 
         return response;
+    }
+
+    @Override
+    public HttpResponseModel UploadCoreAbility(CoreAbilityRequestModel coreAbilityRequestModel) {
+        HttpResponseModel response = ValidateCoreAbility(coreAbilityRequestModel);
+        if(response == null){
+            try {
+                log.info("Trying to save Core Ability");
+                coreAbilityRepository.save(BuildCoreAbilityDocument(coreAbilityRequestModel));
+                log.info("Core Ability Saved");
+                response = new HttpResponseModel("Success", HttpStatus.OK);
+            }catch(MongoException e){
+                log.info("Error: " + e.getMessage());
+                response = new HttpResponseModel("Error", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+        return response;
+    }
+
+    private HttpResponseModel ValidateCoreAbility(CoreAbilityRequestModel coreAbilityRequestModel) {
+        HttpResponseModel response = null;
+        String responseMessage = "";
+
+        if(coreAbilityRequestModel.getName().isEmpty()){
+            responseMessage += "Core Ability name is empty; ";
+        }
+        if(coreAbilityRequestModel.getDescription().isEmpty()){
+            responseMessage += "Core Ability description is empty; ";
+        }
+
+        if(responseMessage.isEmpty()){
+            CoreAbilityDocumentModel coreAbilityDocumentModel = coreAbilityRepository.findOneByName(coreAbilityRequestModel.getName());
+            if(coreAbilityRepository != null){
+                responseMessage += "Core Ability already exists; ";
+            }
+        }
+        return response;
+    }
+
+    private CoreAbilityDocumentModel BuildCoreAbilityDocument(CoreAbilityRequestModel coreAbilityRequestModel){
+        CoreAbilityDocumentModel coreAbilityDocumentModel = new CoreAbilityDocumentModel();
+        coreAbilityDocumentModel.setId(new ObjectId().toString());
+        coreAbilityDocumentModel.setName(coreAbilityRequestModel.getName());
+        coreAbilityDocumentModel.setDescription(coreAbilityRequestModel.getDescription());
+        return coreAbilityDocumentModel;
     }
 
     private WeaponsDocumentTypes BuildWeaponTypeDocument(WeaponRequestTypes weaponRequestTypes){
