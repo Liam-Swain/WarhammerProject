@@ -12,4 +12,5 @@ public interface CoreAbilityRepository extends MongoRepository<CoreAbilityDocume
     CoreAbilityDocumentModel save(CoreAbilityDocumentModel coreAbility);
 
     CoreAbilityDocumentModel findOneByName(String name);
+
 }
