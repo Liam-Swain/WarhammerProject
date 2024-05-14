@@ -1,14 +1,8 @@
 package com.example.demo.ServiceImpl;
 
-import com.example.demo.Documents.CoreAbilityDocumentModel;
-import com.example.demo.Documents.KeywordDocumentModel;
-import com.example.demo.Documents.WeaponsDocumentModel;
-import com.example.demo.Documents.WeaponsDocumentTypes;
+import com.example.demo.Documents.*;
 import com.example.demo.Models.*;
-import com.example.demo.Repository.CoreAbilityRepository;
-import com.example.demo.Repository.KeywordRepository;
-import com.example.demo.Repository.WeaponRepository;
-import com.example.demo.Repository.WeaponTypeRepository;
+import com.example.demo.Repository.*;
 import com.example.demo.Service.WarhammerService;
 import com.mongodb.MongoException;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +30,9 @@ public class WarhammerServiceImpl implements WarhammerService {
 
     @Autowired
     KeywordRepository keywordRepository;
+
+    @Autowired
+    FactionAbilityRepository factionAbilityRepository;
     /*
 
     *** We Should Build an Adapter Class to convert our request to documents ***
@@ -71,7 +68,7 @@ public class WarhammerServiceImpl implements WarhammerService {
 
     private WeaponsDocumentModel BuildWeaponDocument(WeaponsRequestModel weaponsRequestModel){
         WeaponsDocumentModel weapon = new WeaponsDocumentModel();
-        weapon.setId(new ObjectId().toString());
+        //weapon.setId(new ObjectId().toString());
         weapon.setWeaponName(weaponsRequestModel.getWeaponName());
         weapon.setDamage(weaponsRequestModel.getDamage());
         weapon.setPoints(weaponsRequestModel.getPoints());
@@ -206,7 +203,7 @@ public class WarhammerServiceImpl implements WarhammerService {
 
     private KeywordDocumentModel BuildKeywordDocument(KeywordRequestModel keywordRequestModel){
         KeywordDocumentModel keywordDocumentModel = new KeywordDocumentModel();
-        keywordDocumentModel.setId(new ObjectId().toString());
+        //keywordDocumentModel.setId(new ObjectId().toString());
         keywordDocumentModel.setKeyword(keywordRequestModel.getKeyword());
         keywordDocumentModel.setDescription(keywordRequestModel.getDescription());
         return keywordDocumentModel;
@@ -240,18 +237,21 @@ public class WarhammerServiceImpl implements WarhammerService {
             responseMessage += "Core Ability description is empty; ";
         }
 
-        if(responseMessage.isEmpty()){
+        if(responseMessage.isEmpty()) {
             CoreAbilityDocumentModel coreAbilityDocumentModel = coreAbilityRepository.findOneByName(coreAbilityRequestModel.getName());
-            if(coreAbilityRepository != null){
-                responseMessage += "Core Ability already exists; ";
+            if(coreAbilityDocumentModel != null){
+                responseMessage += "Core Ability with this name already exists.";
             }
+        }
+        if(!responseMessage.isEmpty()){
+            response = new HttpResponseModel(responseMessage, HttpStatus.BAD_REQUEST);
         }
         return response;
     }
 
     private CoreAbilityDocumentModel BuildCoreAbilityDocument(CoreAbilityRequestModel coreAbilityRequestModel){
         CoreAbilityDocumentModel coreAbilityDocumentModel = new CoreAbilityDocumentModel();
-        coreAbilityDocumentModel.setId(new ObjectId().toString());
+        //coreAbilityDocumentModel.setId(new ObjectId().toString());
         coreAbilityDocumentModel.setName(coreAbilityRequestModel.getName());
         coreAbilityDocumentModel.setDescription(coreAbilityRequestModel.getDescription());
         return coreAbilityDocumentModel;
@@ -259,7 +259,7 @@ public class WarhammerServiceImpl implements WarhammerService {
 
     private WeaponsDocumentTypes BuildWeaponTypeDocument(WeaponRequestTypes weaponRequestTypes){
         WeaponsDocumentTypes weaponsDocumentTypes = new WeaponsDocumentTypes();
-        weaponsDocumentTypes.setId(new ObjectId().toString());
+        //weaponsDocumentTypes.setId(new ObjectId().toString());
         weaponsDocumentTypes.setName(weaponRequestTypes.getName());
         weaponsDocumentTypes.setDescription(weaponRequestTypes.getDescription());
         return weaponsDocumentTypes;
@@ -267,15 +267,71 @@ public class WarhammerServiceImpl implements WarhammerService {
 
     private HttpResponseModel ValidateWeaponType(WeaponRequestTypes weaponType){
         HttpResponseModel httpResponseModel = null;
-
+        String responseMessage = "";
         if(weaponType.getName().isEmpty()){
-            httpResponseModel = new HttpResponseModel("Missing Weapon Name", HttpStatus.BAD_REQUEST);
+            responseMessage += "Weapon Type Name is Empty; ";
         }
         if(weaponType.getDescription().isEmpty()){
-            httpResponseModel = new HttpResponseModel("Missing Weapon Description", HttpStatus.BAD_REQUEST);
+            responseMessage += "Weapon Type Description is Empty; ";
         }
+
+        if(responseMessage.isEmpty()){
+            WeaponsDocumentTypes weaponTypeDocumentModel = weaponTypeRepository.findByName(weaponType.getName());
+            if(weaponTypeDocumentModel != null){
+                responseMessage = "Weapon Type with this name already exist";
+            }
+        }
+        if(!responseMessage.isEmpty()){
+            httpResponseModel = new HttpResponseModel(responseMessage, HttpStatus.BAD_REQUEST);
+        }
+
         return httpResponseModel;
     }
 
+    @Override
+    public HttpResponseModel UploadFactionAbility(FactionAbilityRequestModel factionAbilityRequestModel){
+        HttpResponseModel response = ValidateFactionAbility(factionAbilityRequestModel);
+        if(response == null){
+            try{
+                log.info("Trying to save Faction Ability");
+                factionAbilityRepository.save(BuildFactionAbility(factionAbilityRequestModel));
+                log.info("Faction Ability saved");
+                response = new HttpResponseModel("Success", HttpStatus.OK);
+            }catch(MongoException e){
+                log.info("Error " + e.getMessage());
+                response = new HttpResponseModel("Error", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+        return response;
+    }
+
+    private FactionAbilityDocumentModel BuildFactionAbility(FactionAbilityRequestModel factionAbilityRequestModel){
+        FactionAbilityDocumentModel factionAbilityDocumentModel = new FactionAbilityDocumentModel();
+        //factionAbilityDocumentModel.setId(new ObjectId().toString());
+        factionAbilityDocumentModel.setFactionAbility(factionAbilityRequestModel.getFactionAbility());
+        factionAbilityDocumentModel.setDescription(factionAbilityRequestModel.getDescription());
+        return factionAbilityDocumentModel;
+    }
+
+    private HttpResponseModel ValidateFactionAbility(FactionAbilityRequestModel factionAbilityRequestModel){
+        HttpResponseModel httpResponseModel = null;
+        String responseMessage = "";
+        if(factionAbilityRequestModel.getFactionAbility().isEmpty()){
+            responseMessage += "Missing Faction Ability Name; ";
+        }
+        if(factionAbilityRequestModel.getDescription().isEmpty()){
+            responseMessage += "Missing Faction Ability Description; ";
+        }
+        if(responseMessage.isEmpty()){
+            FactionAbilityDocumentModel factionAbilityDocumentModel = factionAbilityRepository.findOneByFactionAbility(factionAbilityRequestModel.getFactionAbility());
+            if(factionAbilityDocumentModel != null){
+                responseMessage += "Faction Ability with this name already exists; ";
+            }
+        }
+        if(!responseMessage.isEmpty()){
+            httpResponseModel = new HttpResponseModel(responseMessage, HttpStatus.BAD_REQUEST);
+        }
+        return httpResponseModel;
+    }
 
 }

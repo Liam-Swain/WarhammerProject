@@ -39,11 +39,19 @@ public class WarhammerController {
         return response;
     }
 
-    @PostMapping("Keywords")
+    @PostMapping("/Keywords")
     public HttpResponseModel UploadKeyword(@RequestBody KeywordRequestModel keywordRequestModel){
         log.info("Entering Keyword Upload");
         HttpResponseModel response = warhammerService.UploadKeyword(keywordRequestModel);
         log.info("Exiting Keyword Upload");
+        return response;
+    }
+
+    @PostMapping("/FactionAbilities")
+    public HttpResponseModel UploadFactionAbility(@RequestBody FactionAbilityRequestModel factionAbilityRequestModel){
+        log.info("Entering Faction Ability Upload");
+        HttpResponseModel response = warhammerService.UploadFactionAbility(factionAbilityRequestModel);
+        log.info("Exiting Faction Ability Upload");
         return response;
     }
 }

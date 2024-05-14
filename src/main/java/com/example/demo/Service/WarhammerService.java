@@ -13,4 +13,6 @@ public interface WarhammerService {
     HttpResponseModel UploadKeyword(KeywordRequestModel keywordRequestModel);
 
     public HttpResponseModel UploadCoreAbility(CoreAbilityRequestModel coreAbilityRequestModel);
+
+    HttpResponseModel UploadFactionAbility(FactionAbilityRequestModel factionAbilityRequestModel);
 }
