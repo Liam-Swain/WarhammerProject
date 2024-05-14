@@ -1,10 +1,12 @@
 package com.example.demo.ServiceImpl;
 
 import com.example.demo.Documents.CoreAbilityDocumentModel;
+import com.example.demo.Documents.KeywordDocumentModel;
 import com.example.demo.Documents.WeaponsDocumentModel;
 import com.example.demo.Documents.WeaponsDocumentTypes;
 import com.example.demo.Models.*;
 import com.example.demo.Repository.CoreAbilityRepository;
+import com.example.demo.Repository.KeywordRepository;
 import com.example.demo.Repository.WeaponRepository;
 import com.example.demo.Repository.WeaponTypeRepository;
 import com.example.demo.Service.WarhammerService;
@@ -31,6 +33,9 @@ public class WarhammerServiceImpl implements WarhammerService {
 
     @Autowired
     CoreAbilityRepository coreAbilityRepository;
+
+    @Autowired
+    KeywordRepository keywordRepository;
     /*
 
     *** We Should Build an Adapter Class to convert our request to documents ***
@@ -157,6 +162,54 @@ public class WarhammerServiceImpl implements WarhammerService {
         }
 
         return response;
+    }
+
+    @Override
+    public HttpResponseModel UploadKeyword(KeywordRequestModel keywordRequestModel) {
+        HttpResponseModel response = ValidateKeyword(keywordRequestModel);
+        if(response == null){
+            try {
+                log.info("Trying to save Keyword");
+                keywordRepository.save(BuildKeywordDocument(keywordRequestModel));
+                log.info("Keyword saved");
+                response = new HttpResponseModel("Success", HttpStatus.OK);
+            }catch(MongoException e){
+                log.info("Error: " + e.getMessage());
+                response = new HttpResponseModel("Error", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+        return response;
+    }
+
+    private HttpResponseModel ValidateKeyword(KeywordRequestModel keywordRequestModel){
+        HttpResponseModel response = null;
+        String responseMessage = "";
+        if(keywordRequestModel.getKeyword().isEmpty()){
+            responseMessage += "Keyword is empty; ";
+        }
+        if(keywordRequestModel.getDescription().isEmpty()){
+            responseMessage += "Description is empty; ";
+        }
+
+        if(responseMessage.isEmpty()){
+            KeywordDocumentModel keywordDocumentModel = keywordRepository.findOneByKeyword(keywordRequestModel.getKeyword());
+            if(keywordDocumentModel != null){
+                responseMessage = "Keyword with this name already exists";
+            }
+        }
+
+        if(!responseMessage.isEmpty()){
+            response = new HttpResponseModel(responseMessage, HttpStatus.BAD_REQUEST);
+        }
+        return response;
+    }
+
+    private KeywordDocumentModel BuildKeywordDocument(KeywordRequestModel keywordRequestModel){
+        KeywordDocumentModel keywordDocumentModel = new KeywordDocumentModel();
+        keywordDocumentModel.setId(new ObjectId().toString());
+        keywordDocumentModel.setKeyword(keywordRequestModel.getKeyword());
+        keywordDocumentModel.setDescription(keywordRequestModel.getDescription());
+        return keywordDocumentModel;
     }
 
     @Override

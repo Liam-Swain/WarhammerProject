@@ -1,10 +1,7 @@
 package com.example.demo.Controller;
 
 
-import com.example.demo.Models.CoreAbilityRequestModel;
-import com.example.demo.Models.HttpResponseModel;
-import com.example.demo.Models.WeaponRequestTypes;
-import com.example.demo.Models.WeaponsRequestModel;
+import com.example.demo.Models.*;
 import com.example.demo.Service.WarhammerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,4 +39,11 @@ public class WarhammerController {
         return response;
     }
 
+    @PostMapping("Keywords")
+    public HttpResponseModel UploadKeyword(@RequestBody KeywordRequestModel keywordRequestModel){
+        log.info("Entering Keyword Upload");
+        HttpResponseModel response = warhammerService.UploadKeyword(keywordRequestModel);
+        log.info("Exiting Keyword Upload");
+        return response;
+    }
 }
