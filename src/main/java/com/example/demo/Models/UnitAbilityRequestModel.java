@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class UnitAbilitiesRequestModel {
+public class UnitAbilityRequestModel {
     private String abilityName;
     private String abilityDescription;
 }

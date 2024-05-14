@@ -33,6 +33,9 @@ public class WarhammerServiceImpl implements WarhammerService {
 
     @Autowired
     FactionAbilityRepository factionAbilityRepository;
+
+    @Autowired
+    UnitAbilityRepository unitAbilityRepository;
     /*
 
     *** We Should Build an Adapter Class to convert our request to documents ***
@@ -334,4 +337,48 @@ public class WarhammerServiceImpl implements WarhammerService {
         return httpResponseModel;
     }
 
+    @Override
+    public HttpResponseModel UploadUnitAbility(UnitAbilityRequestModel unitAbilityRequestModel){
+        HttpResponseModel response = ValidateUnitAbility(unitAbilityRequestModel);
+        if(response == null){
+            try{
+                log.info("Trying to save Unit Ability");
+                unitAbilityRepository.save(BuildUnitAbility(unitAbilityRequestModel));
+                log.info("Unit Ability Saved");
+                response = new HttpResponseModel("Success", HttpStatus.OK);
+            }catch(MongoException e){
+                log.info("Error " + e.getMessage());
+                response = new HttpResponseModel("Error", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+        return response;
+    }
+
+    private UnitAbilityDocumentModel BuildUnitAbility(UnitAbilityRequestModel unitAbilityRequestModel){
+        UnitAbilityDocumentModel unitAbilityDocumentModel = new UnitAbilityDocumentModel();
+        unitAbilityDocumentModel.setAbilityName(unitAbilityRequestModel.getAbilityName());
+        unitAbilityDocumentModel.setAbilityDescription(unitAbilityRequestModel.getAbilityDescription());
+        return unitAbilityDocumentModel;
+    }
+
+    private HttpResponseModel ValidateUnitAbility(UnitAbilityRequestModel unitAbilityRequestModel){
+        HttpResponseModel httpResponseModel = null;
+        String responseMessage = "";
+        if(unitAbilityRequestModel.getAbilityName().isEmpty()){
+            responseMessage += "Missing Unit Ability Name; ";
+        }
+        if(unitAbilityRequestModel.getAbilityDescription().isEmpty()){
+            responseMessage += "Missing Unit Ability Description; ";
+        }
+        if(responseMessage.isEmpty()){
+            UnitAbilityDocumentModel unitAbilityDocumentModel = unitAbilityRepository.findOneByAbilityName(unitAbilityRequestModel.getAbilityName());
+            if(unitAbilityDocumentModel != null){
+                responseMessage += "Unit Ability with this name already exists; ";
+            }
+        }
+        if(!responseMessage.isEmpty()){
+            httpResponseModel = new HttpResponseModel(responseMessage, HttpStatus.BAD_REQUEST);
+        }
+        return httpResponseModel;
+    }
 }
