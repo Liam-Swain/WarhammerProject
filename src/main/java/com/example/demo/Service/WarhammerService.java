@@ -17,4 +17,6 @@ public interface WarhammerService {
     HttpResponseModel UploadFactionAbility(FactionAbilityRequestModel factionAbilityRequestModel);
 
     HttpResponseModel UploadUnitAbility(UnitAbilityRequestModel unitAbilityRequestModel);
+
+    HttpResponseModel UploadWargearAbility(WargearAbilityRequestModel wargearAbilityRequestModel);
 }

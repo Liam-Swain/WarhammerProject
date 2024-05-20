@@ -62,4 +62,12 @@ public class WarhammerController {
         log.info("Exiting Unit Ability Upload");
         return response;
     }
+
+    @PostMapping("/WargearAbilities")
+    public HttpResponseModel UploadWargearAbility(@RequestBody WargearAbilityRequestModel wargearAbilityRequestModel){
+        log.info("Entering Wargear Ability Upload");
+        HttpResponseModel response = warhammerService.UploadWargearAbility(wargearAbilityRequestModel);
+        log.info("Exting Wargear Ability Upload");
+        return response;
+    }
 }

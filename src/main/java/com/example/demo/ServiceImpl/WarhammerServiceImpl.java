@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +37,9 @@ public class WarhammerServiceImpl implements WarhammerService {
 
     @Autowired
     UnitAbilityRepository unitAbilityRepository;
+
+    @Autowired
+    WargearAbilityRepository wargearAbilityRepository;
     /*
 
     *** We Should Build an Adapter Class to convert our request to documents ***
@@ -380,5 +384,50 @@ public class WarhammerServiceImpl implements WarhammerService {
             httpResponseModel = new HttpResponseModel(responseMessage, HttpStatus.BAD_REQUEST);
         }
         return httpResponseModel;
+    }
+
+    @Override
+    public HttpResponseModel UploadWargearAbility(WargearAbilityRequestModel wargearAbilityRequestModel){
+        HttpResponseModel response = ValidateWargearAbility(wargearAbilityRequestModel);
+        if(response == null){
+            try{
+                log.info("Trying to save Wargear Ability");
+                wargearAbilityRepository.save(BuildWargearAbility(wargearAbilityRequestModel));
+                log.info("Wargear Ability saved");
+                response = new HttpResponseModel("Success", HttpStatus.OK);
+            }catch(MongoException e){
+                log.info("Error " + e.getMessage());
+                response = new HttpResponseModel("Error", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+        return response;
+    }
+
+    private HttpResponseModel ValidateWargearAbility(WargearAbilityRequestModel wargearAbilityRequestModel){
+        HttpResponseModel httpResponseModel = null;
+        String responseMessage = "";
+        if(wargearAbilityRequestModel.getWargearAbilityName().isEmpty()){
+            responseMessage += "Missing Wargear Ability Name; ";
+        }
+        if(wargearAbilityRequestModel.getWargearAbilityDescription().isEmpty()){
+            responseMessage += "Missing Wargear Ability Description; ";
+        }
+        if(responseMessage.isEmpty()){
+            WargearAbilityDocumentModel wargearAbilityDocumentModel = wargearAbilityRepository.findOneByWargearAbilityName(wargearAbilityRequestModel.getWargearAbilityName());
+            if(wargearAbilityDocumentModel != null){
+                responseMessage += "Wargear Ability with this name already exists; ";
+            }
+        }
+        if(!responseMessage.isEmpty()){
+            httpResponseModel = new HttpResponseModel(responseMessage, HttpStatus.BAD_REQUEST);
+        }
+        return httpResponseModel;
+    }
+
+    private WargearAbilityDocumentModel BuildWargearAbility(WargearAbilityRequestModel wargearAbilityRequestModel){
+        WargearAbilityDocumentModel wargearAbilityDocumentModel = new WargearAbilityDocumentModel();
+        wargearAbilityDocumentModel.setWargearAbilityName(wargearAbilityRequestModel.getWargearAbilityName());
+        wargearAbilityDocumentModel.setWargearAbilityDescription(wargearAbilityDocumentModel.getWargearAbilityDescription());
+        return wargearAbilityDocumentModel;
     }
 }
